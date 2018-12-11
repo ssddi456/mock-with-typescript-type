@@ -1,0 +1,37 @@
+{
+    "name": "mock-with-typescript-type",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ssddi456/mock-with-typescript-type.git"
+    },
+    "author": "ssddi456",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/ssddi456/mock-with-typescript-type/issues"
+    },
+    "homepage": "https://github.com/ssddi456/mock-with-typescript-type#readme",
+    "dependencies": {
+        "fs-extra": "^7.0.1",
+        "inquirer": "^6.2.1",
+        "json-schema-faker": "^0.5.0-rc16",
+        "typescript": "^3.2.2",
+        "typescript-json-schema": "^0.33.0"
+    },
+    "devDependencies": {
+        "@types/fs-extra": "^5.0.4",
+        "@types/inquirer": "0.0.43",
+        "@types/node": "^10.12.12"
+    },
+    "bin": {
+        "mockapi": "./dist/index.js"
+    },
+    "engines": {
+        "node": ">=6.0"
+    }
+}
