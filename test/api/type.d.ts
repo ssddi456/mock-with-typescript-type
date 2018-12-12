@@ -26,10 +26,32 @@ interface notQualifiedData {
     notQualified: 1;
 }
 
+interface UserStatus {
+    /**
+     * @pattern \*{4} [0-9]{4}
+     */
+    name: string;
+    /**
+     * @type integer
+     * @minimum 0
+     * @maximum 100
+     * @autoIncrement true
+     */
+    score: number;
+}
+
+interface GameStatus {
+    userScore: UserStatus;
+    /**
+     * @minItems 10
+     * @maxItems 10
+     */
+    topUsers: UserStatus[];
+}
 /**
  * some strange things
  */
-type ApiSuccessResp = ApiSuccessBaseResp<{}>;
+type ApiSuccessResp = ApiSuccessBaseResp<GameStatus>;
 
 type ApiExpireResp = ApiErrorBaseResp<ExpiredData>;
 type ApiNotQualifiedResp = ApiErrorBaseResp<notQualifiedData>;

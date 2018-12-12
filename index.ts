@@ -3,6 +3,7 @@
 import * as TJS from 'typescript-json-schema';
 import * as jsf from 'json-schema-faker';
 import * as path from 'path';
+import * as util from 'util';
 import * as inquirer from 'inquirer';
 import * as fs from 'fs-extra';
 import readComments from './readComments';
@@ -71,10 +72,10 @@ const settings: TJS.PartialArgs = {
     const jsonPath = path.join(testDataPath, path.basename(apiFile.apiFile, '.ts') + '.json');
 
     console.log('write to file', jsonPath);
-    console.log(testValue);
+    console.log(util.inspect(testValue));
 
     await fs.mkdirp(testDataPath);
-    await fs.writeJSON(jsonPath, testValue);
+    await fs.writeJSON(jsonPath, testValue, { spaces: 4 });
 
     console.log('all done');
 })();

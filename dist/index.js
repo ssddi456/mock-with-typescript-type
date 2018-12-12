@@ -40,6 +40,7 @@ exports.__esModule = true;
 var TJS = require("typescript-json-schema");
 var jsf = require("json-schema-faker");
 var path = require("path");
+var util = require("util");
 var inquirer = require("inquirer");
 var fs = require("fs-extra");
 var readComments_1 = require("./readComments");
@@ -110,11 +111,11 @@ var settings = {
                 testValue = jsf.generate(schema);
                 jsonPath = path.join(testDataPath, path.basename(apiFile.apiFile, '.ts') + '.json');
                 console.log('write to file', jsonPath);
-                console.log(testValue);
+                console.log(util.inspect(testValue));
                 return [4 /*yield*/, fs.mkdirp(testDataPath)];
             case 7:
                 _a.sent();
-                return [4 /*yield*/, fs.writeJSON(jsonPath, testValue)];
+                return [4 /*yield*/, fs.writeJSON(jsonPath, testValue, { spaces: 4 })];
             case 8:
                 _a.sent();
                 console.log('all done');
