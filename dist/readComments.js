@@ -1,7 +1,7 @@
 "use strict";
 exports.__esModule = true;
-function default_1(program, file) {
-    console.log('start !!!!');
+var ts = require("typescript");
+function readCommentOfFile(program, file) {
     var srcFile = program.getSourceFile(file);
     var fileComment = '';
     if (srcFile.statements.length) {
@@ -20,4 +20,36 @@ function default_1(program, file) {
     }
     return fileComment;
 }
-exports["default"] = default_1;
+exports["default"] = readCommentOfFile;
+function readCommentOfTypes(program, file, typeNames) {
+    var srcFile = program.getSourceFile(file);
+    var checker = program.getTypeChecker();
+    var symbols = checker.getSymbolsInScope(srcFile, ts.SymbolFlags.Interface).concat(checker.getSymbolsInScope(srcFile, ts.SymbolFlags.Type), checker.getSymbolsInScope(srcFile, ts.SymbolFlags.TypeAlias), checker.getSymbolsInScope(srcFile, ts.SymbolFlags.Class));
+    var apiTypeInfo = [];
+    symbols.forEach(function (symbol) {
+        var name = symbol.getName();
+        if (typeNames.indexOf(name) != -1) {
+            var info = {
+                name: name,
+                comment: '',
+                url: ''
+            };
+            var jsDoc = symbol.getJsDocTags();
+            if (jsDoc.length) {
+                var urlComments = jsDoc.filter(function (doc) {
+                    return doc.name == 'url';
+                });
+                if (urlComments.length) {
+                    info.url = urlComments[0].text;
+                }
+            }
+            var comments = symbol.getDocumentationComment(checker);
+            if (comments.length) {
+                info.comment = comments[0].text;
+            }
+            apiTypeInfo.push(info);
+        }
+    });
+    return apiTypeInfo;
+}
+exports.readCommentOfTypes = readCommentOfTypes;

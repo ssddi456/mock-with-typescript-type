@@ -26,3 +26,31 @@ mockapi
 [json-schema-faker](https://github.com/json-schema-faker/json-schema-faker) 的文档
 
 类型数据配置方法参考`test`目录中的示例。
+
+```@url```注释可以指定输出路径，属性的注释可以指定输出格式
+
+```typescript
+/**
+ * @url /path/to/visit
+ */
+
+interface ApiTestResp {
+    /**
+     * @pattern \*{4} [0-9]{4}
+     */
+    name: string;
+    /**
+     * @type integer
+     * @minimum 0
+     * @maximum 100
+     * @autoIncrement true
+     */
+    score: number;
+    /**
+     * @minItems 10
+     * @maxItems 10
+     */
+    topUsers: UserStatus[];
+}
+```
+

@@ -102,19 +102,30 @@ var settings = {
                 return [4 /*yield*/, inquirer.prompt({
                         type: 'list',
                         name: 'apiName',
-                        message: 'select a status',
-                        choices: apiSymbols
+                        message: 'select a interface',
+                        choices: readComments_1.readCommentOfTypes(program, fullPath, apiSymbols).map(function (info) {
+                            return {
+                                name: [info.name, info.comment, info.url].filter(Boolean).join(' '),
+                                value: info
+                            };
+                        })
                     })];
             case 6:
                 apiName = _a.sent();
-                schema = generator.getSchemaForSymbol(apiName.apiName);
+                schema = generator.getSchemaForSymbol(apiName.apiName.name);
                 testValue = jsf.generate(schema);
-                jsonPath = path.join(testDataPath, path.basename(apiFile.apiFile, '.ts') + '.json');
+                path.resolve;
+                if (apiName.apiName.url) {
+                    jsonPath = path.join(testDataPath, path.join('/', apiName.apiName.url + '.json'));
+                }
+                else {
+                    jsonPath = path.join(testDataPath, path.basename(apiFile.apiFile, '.ts') + '.json');
+                }
                 console.log('write to file', jsonPath);
-                console.log(util.inspect(testValue));
-                return [4 /*yield*/, fs.mkdirp(testDataPath)];
+                return [4 /*yield*/, fs.mkdirp(path.dirname(jsonPath))];
             case 7:
                 _a.sent();
+                console.log(util.inspect(testValue));
                 return [4 /*yield*/, fs.writeJSON(jsonPath, testValue, { spaces: 4 })];
             case 8:
                 _a.sent();

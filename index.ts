@@ -6,7 +6,7 @@ import * as path from 'path';
 import * as util from 'util';
 import * as inquirer from 'inquirer';
 import * as fs from 'fs-extra';
-import readComments from './readComments';
+import readComments, { readCommentOfTypes, ApiTypeInfo } from './readComments';
 
 const settings: TJS.PartialArgs = {
     required: true,
@@ -60,21 +60,33 @@ const settings: TJS.PartialArgs = {
         return;
     }
 
-    const apiName = await inquirer.prompt<{ apiName: string }>({
+    const apiName = await inquirer.prompt<{ apiName: ApiTypeInfo }>({
         type: 'list',
         name: 'apiName',
-        message: 'select a status',
-        choices: apiSymbols
+        message: 'select a interface',
+        choices: readCommentOfTypes(program, fullPath, apiSymbols).map((info) => {
+            return {
+                name: [info.name, info.comment, info.url].filter(Boolean).join(' '),
+                value: info
+            };
+        })
     });
 
-    const schema = generator.getSchemaForSymbol(apiName.apiName);
+    const schema = generator.getSchemaForSymbol(apiName.apiName.name);
+
     const testValue = jsf.generate(schema);
-    const jsonPath = path.join(testDataPath, path.basename(apiFile.apiFile, '.ts') + '.json');
+
+    let jsonPath: string;
+    path.resolve
+    if(apiName.apiName.url) {
+        jsonPath = path.join(testDataPath, path.join('/', apiName.apiName.url + '.json'));
+    } else {
+        jsonPath = path.join(testDataPath, path.basename(apiFile.apiFile, '.ts') + '.json');
+    }
 
     console.log('write to file', jsonPath);
+    await fs.mkdirp(path.dirname(jsonPath));
     console.log(util.inspect(testValue));
-
-    await fs.mkdirp(testDataPath);
     await fs.writeJSON(jsonPath, testValue, { spaces: 4 });
 
     console.log('all done');
