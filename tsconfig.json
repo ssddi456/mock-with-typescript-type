@@ -4,5 +4,7 @@
         "lib": ["es2015"],
         "outDir": "./dist",
         "removeComments": false,
+        "strictNullChecks": true,
+        "strictBindCallApply": true
     }
 }

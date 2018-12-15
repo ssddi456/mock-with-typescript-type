@@ -4,21 +4,23 @@ var ts = require("typescript");
 function readCommentOfFile(program, file) {
     var srcFile = program.getSourceFile(file);
     var fileComment = '';
-    if (srcFile.statements.length) {
+    if (srcFile && srcFile.statements.length) {
         var firstDoc = srcFile.statements[0].jsDoc;
         if (firstDoc && firstDoc.length) {
-            firstDoc[0].tags.forEach(function (tag) {
-                var tagName = tag.tagName.escapedText;
-                if (tagName == 'file' || tagName == 'fileOverview') {
-                    fileComment = tag.comment;
-                }
-            });
+            if (firstDoc[0].tags) {
+                firstDoc[0].tags.forEach(function (tag) {
+                    var tagName = tag.tagName.escapedText;
+                    if (tagName == 'file' || tagName == 'fileOverview') {
+                        fileComment = tag.comment;
+                    }
+                });
+            }
             if (!fileComment && firstDoc[0].comment) {
                 fileComment = firstDoc[0].comment;
             }
         }
     }
-    return fileComment;
+    return fileComment || '';
 }
 exports["default"] = readCommentOfFile;
 function readCommentOfTypes(program, file, typeNames) {
@@ -40,7 +42,7 @@ function readCommentOfTypes(program, file, typeNames) {
                     return doc.name == 'url';
                 });
                 if (urlComments.length) {
-                    info.url = urlComments[0].text;
+                    info.url = urlComments[0].text || '';
                 }
             }
             var comments = symbol.getDocumentationComment(checker);

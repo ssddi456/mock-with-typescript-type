@@ -62,7 +62,7 @@ const mockApi = async () => {
 
     const apiFile = await selectFile();
     const fullPath = apiFile.apiFile;
-    const generator = TJS.buildGenerator(program, settings);
+    const generator = TJS.buildGenerator(program, settings)!;
     const allSymbols = generator.getMainFileSymbols(program, [fullPath]);
 
     const apiSymbols = allSymbols.filter((x) => x.match(/^Api/));

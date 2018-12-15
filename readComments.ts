@@ -2,22 +2,24 @@ import * as ts from 'typescript';
 
 export default function readCommentOfFile(program: ts.Program, file: string) {
     const srcFile = program.getSourceFile(file);
-    let fileComment = '';
-    if (srcFile.statements.length) {
+    let fileComment: string | undefined = '';
+    if (srcFile && srcFile.statements.length) {
         const firstDoc: ts.JSDoc[] = (srcFile.statements[0] as any).jsDoc;
         if (firstDoc && firstDoc.length) {
-            firstDoc[0].tags.forEach(function (tag) {
-                const tagName = tag.tagName.escapedText;
-                if (tagName == 'file' || tagName == 'fileOverview') {
-                    fileComment = tag.comment;
-                }
-            });
+            if (firstDoc[0].tags) {
+                firstDoc[0].tags.forEach(function (tag) {
+                    const tagName = tag.tagName.escapedText;
+                    if (tagName == 'file' || tagName == 'fileOverview') {
+                        fileComment = tag.comment;
+                    }
+                });
+            }
             if (!fileComment && firstDoc[0].comment) {
                 fileComment = firstDoc[0].comment;
             }
         }
     }
-    return fileComment;
+    return fileComment || '';
 }
 
 export interface ApiTypeInfo {
@@ -32,7 +34,7 @@ export function readCommentOfTypes(
     typeNames: string[]
 ): ApiTypeInfo[] {
 
-    const srcFile = program.getSourceFile(file);
+    const srcFile = program.getSourceFile(file)!;
     const checker = program.getTypeChecker();
     const symbols = [
         ...checker.getSymbolsInScope(srcFile, ts.SymbolFlags.Interface),
@@ -58,7 +60,7 @@ export function readCommentOfTypes(
                     return doc.name == 'url';
                 });
                 if (urlComments.length) {
-                    info.url = urlComments[0].text;
+                    info.url = urlComments[0].text || '';
                 }
             }
 
