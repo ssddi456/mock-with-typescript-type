@@ -1,4 +1,3 @@
-import * as TJS from 'typescript-json-schema';
 import * as ts from 'typescript';
 
 export default function readCommentOfFile(program: ts.Program, file: string) {
@@ -73,4 +72,42 @@ export function readCommentOfTypes(
     });
 
     return apiTypeInfo;
+}
+
+interface PropertyDocInfo {
+    name: string;
+    isRequired: boolean;
+    type: string;
+    desc: string;
+}
+
+interface TypeDocInfo {
+    name: string;
+    desc: string;
+    properties: PropertyDocInfo[]
+}
+
+function isTypeDeclare(node: ts.Node): boolean {
+    return node.kind === ts.SyntaxKind.InterfaceDeclaration
+        || node.kind === ts.SyntaxKind.EnumDeclaration
+        || node.kind === ts.SyntaxKind.TypeAliasDeclaration;
+
+}
+
+
+export function getAllTypes(
+    program: ts.Program,
+    file: string,
+): TypeDocInfo[] {
+    const ret: TypeDocInfo[] = [];
+
+    const srcFile = program.getSourceFile(file);
+    const checker = program.getTypeChecker();
+
+    function getDocumentFromSymbol(symbol) {
+        return (symbol.getDocumentationComment(checker)[0] || { text: '' }).text;
+    }
+
+
+    return ret;
 }

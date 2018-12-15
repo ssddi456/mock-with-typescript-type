@@ -17,6 +17,7 @@
     },
     "homepage": "https://github.com/ssddi456/mock-with-typescript-type#readme",
     "dependencies": {
+        "commander": "^2.19.0",
         "fs-extra": "^7.0.1",
         "inquirer": "^6.2.1",
         "json-schema-faker": "^0.5.0-rc16",

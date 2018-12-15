@@ -43,53 +43,69 @@ var path = require("path");
 var util = require("util");
 var inquirer = require("inquirer");
 var fs = require("fs-extra");
+var cliProgram = require("commander");
 var readComments_1 = require("./readComments");
 var settings = {
     required: true,
     ref: true,
     topRef: true
 };
-(function () { return __awaiter(_this, void 0, void 0, function () {
-    var rootDir, basePath, testDataPath, allfile, error_1, allFilePath, program, allFileInfo, apiFile, fullPath, generator, allSymbols, apiSymbols, apiName, schema, testValue, jsonPath;
+var rootDir = process.cwd();
+var basePath = path.join(rootDir, 'api');
+var testDataPath = path.join(rootDir, 'test/api');
+var allfile = [];
+try {
+    allfile = fs.readdirSync(basePath);
+    ;
+}
+catch (error) {
+    throw error;
+}
+var allFilePath = allfile.map(function (x) { return path.join(basePath, x); });
+var program = TJS.getProgramFromFiles(allFilePath, basePath);
+function selectFile() {
+    return __awaiter(this, void 0, void 0, function () {
+        var allFileInfo, apiFile;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    allFileInfo = allfile.map(function (x) {
+                        var fullPath = path.join(basePath, x).replace(/\\/g, '/');
+                        return {
+                            name: x + ' ' + readComments_1["default"](program, fullPath),
+                            value: fullPath
+                        };
+                    });
+                    return [4 /*yield*/, inquirer.prompt({
+                            type: 'list',
+                            name: 'apiFile',
+                            message: 'select a api file to change',
+                            choices: allFileInfo
+                        })];
+                case 1:
+                    apiFile = _a.sent();
+                    return [2 /*return*/, apiFile];
+            }
+        });
+    });
+}
+var listApi = function () { return __awaiter(_this, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        console.log('havent implements');
+        return [2 /*return*/];
+    });
+}); };
+var mockApi = function () { return __awaiter(_this, void 0, void 0, function () {
+    var apiFile, fullPath, generator, allSymbols, apiSymbols, apiName, schema, testValue, jsonPath;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                rootDir = process.cwd();
-                basePath = path.join(rootDir, 'api');
-                testDataPath = path.join(rootDir, 'test/api');
-                allfile = [];
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, fs.readdir(basePath)];
-            case 2:
-                allfile = _a.sent();
-                ;
-                return [3 /*break*/, 4];
-            case 3:
-                error_1 = _a.sent();
-                throw error_1;
-            case 4:
                 if (!allfile.length) {
                     console.log('api definition files cannot be found');
                     return [2 /*return*/];
                 }
-                allFilePath = allfile.map(function (x) { return path.join(basePath, x); });
-                program = TJS.getProgramFromFiles(allFilePath, basePath);
-                allFileInfo = allfile.map(function (x) {
-                    var fullPath = path.join(basePath, x).replace(/\\/g, '/');
-                    return {
-                        name: x + ' ' + readComments_1["default"](program, fullPath),
-                        value: fullPath
-                    };
-                });
-                return [4 /*yield*/, inquirer.prompt({
-                        type: 'list',
-                        name: 'apiFile',
-                        message: 'select a api file to change',
-                        choices: allFileInfo
-                    })];
-            case 5:
+                return [4 /*yield*/, selectFile()];
+            case 1:
                 apiFile = _a.sent();
                 fullPath = apiFile.apiFile;
                 generator = TJS.buildGenerator(program, settings);
@@ -110,7 +126,7 @@ var settings = {
                             };
                         })
                     })];
-            case 6:
+            case 2:
                 apiName = _a.sent();
                 schema = generator.getSchemaForSymbol(apiName.apiName.name);
                 testValue = jsf.generate(schema);
@@ -123,14 +139,25 @@ var settings = {
                 }
                 console.log('write to file', jsonPath);
                 return [4 /*yield*/, fs.mkdirp(path.dirname(jsonPath))];
-            case 7:
+            case 3:
                 _a.sent();
                 console.log(util.inspect(testValue));
                 return [4 /*yield*/, fs.writeJSON(jsonPath, testValue, { spaces: 4 })];
-            case 8:
+            case 4:
                 _a.sent();
                 console.log('all done');
                 return [2 /*return*/];
         }
     });
-}); })();
+}); };
+cliProgram.version('0.0.1')
+    .description('')
+    .option('--list', 'list type as table');
+cliProgram
+    .parse(process.argv);
+if (cliProgram.list) {
+    listApi();
+}
+else {
+    mockApi();
+}

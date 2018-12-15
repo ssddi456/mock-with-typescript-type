@@ -53,3 +53,18 @@ function readCommentOfTypes(program, file, typeNames) {
     return apiTypeInfo;
 }
 exports.readCommentOfTypes = readCommentOfTypes;
+function isTypeDeclare(node) {
+    return node.kind === ts.SyntaxKind.InterfaceDeclaration
+        || node.kind === ts.SyntaxKind.EnumDeclaration
+        || node.kind === ts.SyntaxKind.TypeAliasDeclaration;
+}
+function getAllTypes(program, file) {
+    var ret = [];
+    var srcFile = program.getSourceFile(file);
+    var checker = program.getTypeChecker();
+    function getDocumentFromSymbol(symbol) {
+        return (symbol.getDocumentationComment(checker)[0] || { text: '' }).text;
+    }
+    return ret;
+}
+exports.getAllTypes = getAllTypes;
